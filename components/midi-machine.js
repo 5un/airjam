@@ -13,10 +13,9 @@ export default class MidiMachine extends React.Component {
       this.scriptLatch -= 1;
     } else {
       if(window) {
-        console.log('checking scripts');
         console.log(window.MIDI);
-
         const MIDI = window.MIDI;
+        this.MIDI = MIDI;
         MIDI.loadPlugin({
           soundfontUrl: "/static/soundfont/",
           instrument: "acoustic_grand_piano",
@@ -37,6 +36,16 @@ export default class MidiMachine extends React.Component {
       }
     }
   }
+
+  playNote(note) {
+    var delay = 0; // play one note every quarter second
+    var velocity = 127; // how hard the note hits
+    // play the note
+    MIDI.setVolume(0, 127);
+    MIDI.noteOn(0, note, velocity, delay);
+    MIDI.noteOff(0, note, delay + 0.75);
+  }
+
 
   render() {
     return (
