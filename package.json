@@ -1,5 +1,5 @@
 {
-  "name": "hackathonkit",
+  "name": "airjam",
   "version": "1.0.0",
   "description": "A Hackathon Starter Kit",
   "main": "index.js",
@@ -24,7 +24,6 @@
   "homepage": "https://github.com/5un/hackathonkit#readme",
   "dependencies": {
     "lodash": "^4.17.4",
-    "midi": "^0.9.5",
     "next": "^3.2.2",
     "next-redux-wrapper": "^1.3.4",
     "react": "^15.6.1",
@@ -33,6 +32,7 @@
     "react-load-script": "0.0.6",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
+    "satori-rtm-sdk": "^1.1.1",
     "styled-components": "^2.1.2"
   }
 }

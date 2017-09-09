@@ -1,6 +1,8 @@
 import React from 'react'
 import Script from 'react-load-script'
 
+const baseScriptUrl = 'https://s3-us-west-1.amazonaws.com/airjamapp'
+
 export default class MidiMachine extends React.Component {
 
   constructor(props) {
@@ -17,7 +19,7 @@ export default class MidiMachine extends React.Component {
         const MIDI = window.MIDI;
         this.MIDI = MIDI;
         MIDI.loadPlugin({
-          soundfontUrl: "/static/soundfont/",
+          soundfontUrl: `${baseScriptUrl}/soundfont/`,
           instrument: "acoustic_grand_piano",
           onprogress: function(state, progress) {
             console.log(state, progress);
@@ -50,17 +52,17 @@ export default class MidiMachine extends React.Component {
   render() {
     return (
       <div>
-        <Script url="/static/js/midijs/inc/shim/WebMIDIAPI.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/inc/shim/Base64.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/inc/shim/Base64binary.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/js/midi/audioDetect.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/js/midi/gm.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/js/midi/loader.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/js/midi/plugin.audiotag.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/js/midi/plugin.webaudio.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/js/midi/plugin.webmidi.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/js/util/dom_request_xhr.js" onLoad={this.handleScriptLoad.bind(this)} />
-        <Script url="/static/js/midijs/js/util/dom_request_script.js" onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/inc/shim/WebMIDIAPI.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/inc/shim/Base64.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/inc/shim/Base64binary.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/js/midi/audioDetect.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/js/midi/gm.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/js/midi/loader.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/js/midi/plugin.audiotag.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/js/midi/plugin.webaudio.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/js/midi/plugin.webmidi.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/js/util/dom_request_xhr.js`} onLoad={this.handleScriptLoad.bind(this)} />
+        <Script url={`${baseScriptUrl}/js/midijs/js/util/dom_request_script.js`} onLoad={this.handleScriptLoad.bind(this)} />
       </div>
     );
   }
