@@ -24,7 +24,8 @@ const PianoBlackKey = styled.button`
   z-index: 2;
 `;
 
-const blackKeys = [1, 3, 6, 8, 10]
+const blackKeys = [1, 3, 6, 8, 10];
+const keyboardMapping = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j'];
 
 export default class PianoPad extends React.Component {
 
@@ -34,10 +35,35 @@ export default class PianoPad extends React.Component {
     // startingOctave
   }
 
-  onKeyPushed(note) {
+  onPianoKeyPushed(note) {
     console.log(note);
+
     if(this.props.onNotePushed) {
       this.props.onNotePushed(note);
+    }
+  }
+
+  onKeyDown(e) {
+    const startingOctave = this.props.startingOctave || 3;
+    const keyIndex = keyboardMapping.indexOf(e.key);
+    if (keyIndex > -1){
+      const note = startingOctave * 12 + keyIndex;
+      if(this.props.onNotePushed) {
+        this.props.onNotePushed(note);
+      }
+    }
+    
+  }
+
+  componentDidMount(){
+    if (window) {
+      window.document.addEventListener("keydown", (e) => (this.onKeyDown(e)));
+    }
+  }
+
+  componentWillUnmount() {
+    if (window) {
+      window.document.removeEventListener("keydown", (e) => (this.onKeyDown(e)));
     }
   }
 
@@ -50,8 +76,8 @@ export default class PianoPad extends React.Component {
       <div>
         {_.map(keys, k => (
           _.indexOf(blackKeys, k % 12) > -1 ?
-            <PianoBlackKey onClick={this.onKeyPushed.bind(this, k)}></PianoBlackKey>:
-            <PianoWhiteKey onClick={this.onKeyPushed.bind(this, k)}></PianoWhiteKey>
+            <PianoBlackKey onClick={this.onPianoKeyPushed.bind(this, k)}></PianoBlackKey>:
+            <PianoWhiteKey onClick={this.onPianoKeyPushed.bind(this, k)}></PianoWhiteKey>
         ))}
       </div>
     );
