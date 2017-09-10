@@ -146,7 +146,7 @@ export default class Rooms extends React.Component {
     //   );
     // }, 10);
 
-    this.setState({ currentUser: { username } });
+    this.setState({ currentUser: { name: username } });
   }
 
   onNotePushed(note) {
@@ -192,12 +192,14 @@ export default class Rooms extends React.Component {
     const { currentUser, currentInstrument } = this.state;
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     const channelName = `airjam-${roomId}`
-    if(this.rtm) {
-      rtm.publish(channelName, {
+    const presenceMsg = {
         type: 'presence',
         user: currentUser,
         instrument: currentInstrument
-      });
+      };
+    console.log(presenceMsg);
+    if(this.rtm) {
+      rtm.publish(channelName, presenceMsg);
     }
   }
 
@@ -235,7 +237,7 @@ export default class Rooms extends React.Component {
 
   onMotionOrOrientationChanged(motion, orientation) {
     const drumFuncs = {
-      tom: () => { this.sendDrumNote('tom'); },
+      bassdrum: () => { this.sendDrumNote('bassdrum'); },
       snare: () => { this.sendDrumNote('snare'); }, 
       ride: () => { this.sendDrumNote('ride'); }
     };

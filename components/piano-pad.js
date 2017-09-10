@@ -14,7 +14,7 @@ const PianoWhiteKey = styled.button`
   background-color: white;
   border: 2px solid bold;
   height: 200px;
-  width: 12.5%;
+  width: 6.25%;
   vertical-align: top;
   z-index: 1;
   border-radius: 4px;
@@ -26,15 +26,15 @@ const PianoBlackKey = styled.button`
   background-color: black;
   border: 2px solid bold;
   height: 100px;
-  width: 12.5%;
-  margin: 0 -6.25%;
+  width: 6.25%;
+  margin: 0 -3.125%;
   vertical-align: top;
   z-index: 2;
   border-radius: 4px;
 `;
 
 const blackKeys = [1, 3, 6, 8, 10];
-const keyboardMapping = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j'];
+const keyboardMapping = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j','k','o','l','p',';','[','\''];
 
 export default class PianoPad extends React.Component {
 
@@ -46,7 +46,6 @@ export default class PianoPad extends React.Component {
 
   onPianoKeyPushed(note) {
     console.log(note);
-
     if(this.props.onNotePushed) {
       this.props.onNotePushed(note);
     }
@@ -77,7 +76,7 @@ export default class PianoPad extends React.Component {
   }
 
   render() {
-    const numOctaves = this.props.numOctaves || 1;
+    const numOctaves = this.props.numOctaves || 2;
     const startingOctave = this.props.startingOctave || 3;
     const keys = _.range(12 * startingOctave, 12 * (startingOctave + numOctaves));
 
