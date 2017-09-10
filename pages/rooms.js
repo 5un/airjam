@@ -8,6 +8,7 @@ import MotionController from '../components/motion-controller'
 import RTM from 'satori-rtm-sdk';
 import styled from 'styled-components'
 import mapMotion from '../lib/motion-mapper'
+import _ from 'lodash'
 
 const rtm = new RTM('wss://q5241z7b.api.satori.com', 'CD3108D6a79CAE30b8E8C37ebad877A6');
 const channelName = 'jam-session-1'
@@ -40,6 +41,7 @@ export default class Rooms extends React.Component {
       orientation: []
     };
     this.lastMotionTimestamp = new Date();
+    this.timeOfLastTrigger = new Date();
 
   }
 
@@ -91,21 +93,32 @@ export default class Rooms extends React.Component {
   }
 
   onNotePushed(note) {
-    if(this.midiMachine) {
-      this.midiMachine.playNote(note);
 
-      if(this.rtm) {
-        const msg = { note: note };
-        this.rtm.publish(channelName, msg , (pdu) => {
-          if (pdu.action === 'rtm/publish/ok') {
-            console.log('Publish confirmed');
-          } else {
-            console.log('Failed to publish. RTM replied with the error ' +
-                pdu.body.error + ': ' + pdu.body.reason);
-          }
-        });
-      }
-    }
+    // if(this.midiMachine) {
+    //   this.midiMachine.playNote(note);
+
+    //   if(this.rtm) {
+    //     const msg = { note: note };
+    //     this.rtm.publish(channelName, msg , (pdu) => {
+    //       if (pdu.action === 'rtm/publish/ok') {
+    //         console.log('Publish confirmed');
+    //       } else {
+    //         console.log('Failed to publish. RTM replied with the error ' +
+    //             pdu.body.error + ': ' + pdu.body.reason);
+    //       }
+    //     });
+    //   }
+    // }
+
+    if(note % 12 == 0) {
+      this.webAudioFont.playSnare();
+    } 
+    if(note % 12 == 1) {
+      this.webAudioFont.playTom();
+    } 
+    if(note % 12 == 2) {
+      this.webAudioFont.playHihat();
+    } 
   }
 
   updateMotionHistory(motion, orientation) {
@@ -132,38 +145,39 @@ export default class Rooms extends React.Component {
   }
 
   onMotionOrOrientationChanged(motion, orientation) {
-    const timeSinceLastMotionTimeStamp = (new Date()) - this.lastMotionTimestamp;
-    if (timeSinceLastMotionTimeStamp > MAX_SAMPLING_RATE) {
-      if(this.midiMachine) {
-        const mid = mapMotion(motion, orientation, this.history.motion, this.history.orientation);
-        if(this.rtm) {
-          this.rtm.publish(channelName, mid , (pdu) => {
-            if (pdu.action === 'rtm/publish/ok') {
-              console.log('Publish confirmed');
-            } else {
-              console.log('Failed to publish. RTM replied with the error ' +
-                  pdu.body.error + ': ' + pdu.body.reason);
-            }
-          });
+    if(this.midiMachine) {
+      const drumFuncs = {
+        tom: () => {
+          this.webAudioFont.playTom();
+        },
+        snare: () => {
+          this.webAudioFont.playSnare();
+        }, 
+        ride: () => {
+          this.webAudioFont.playHihat();
         }
-        this.updateMotionHistory(motion, orientation);
+      };
+      const triggered = mapMotion(motion, orientation, this.history.motion, this.history.orientation, (new Date() - this.timeOfLastTrigger), drumFuncs);
+      if(triggered) {
+        this.timeOfLastTrigger = new Date();
       }
-      this.lastMotionTimestamp = new Date();
+      this.updateMotionHistory(motion, orientation);
     }
     
   }
 
   onSoundFontsLoaded() {
     if(this.webAudioFont) {
-      this.webAudioFont.startBeat();
+      // this.webAudioFont.startBeat();
     }
   }
 
   render() {
     const { clientConnected } = this.state; 
+    const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     return (
       <Page>
-        <h1>Welcome to Room 1</h1>
+        <h1>Welcome to Room {roomId}</h1>
         <p>Start jamming right away</p>
         {clientConnected &&
           <div>Connected <ClientConnectedIndicator/></div>

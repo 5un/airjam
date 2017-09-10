@@ -134,8 +134,42 @@ export default class WebAudioFont extends React.Component {
   }
 
   playNote() {
-
+    this.player.queueWaveTable(
+      this.audioContext,
+      this.audioContext.destination, 
+      _drum_40_6_JCLive_sf2_file, 
+      0, 35, 3
+    );
   }
+
+  playSnare() {
+    this.player.queueWaveTable(
+      this.audioContext,
+      this.audioContext.destination, 
+      _drum_40_6_JCLive_sf2_file, 
+      0, 35, 3
+    );
+  }
+
+  playHihat() {
+    this.player.queueWaveTable(
+      this.audioContext,
+      this.audioContext.destination, 
+      _drum_46_6_JCLive_sf2_file, 
+      0, 35, 3
+    );
+  }
+
+  playTom() {
+    this.player.queueWaveTable(
+      this.audioContext,
+      this.audioContext.destination, 
+      _drum_36_6_JCLive_sf2_file, 
+      0, 35, 3
+    );
+  }
+
+
 
   render() {
     return (
