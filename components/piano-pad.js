@@ -16,7 +16,7 @@ const PianoWhiteKey = styled.button`
   background-color: white;
   border: 2px solid bold;
   height: 200px;
-  width: 50px;
+  width: 12.5%;
   vertical-align: top;
   z-index: 1;
 `;
@@ -26,8 +26,8 @@ const PianoBlackKey = styled.button`
   background-color: black;
   border: 2px solid bold;
   height: 100px;
-  width: 50px;
-  margin: 0 -25px;
+  width: 12.5%;
+  margin: 0 -6.25%;
   vertical-align: top;
   z-index: 2;
 `;
@@ -76,7 +76,7 @@ export default class PianoPad extends React.Component {
   }
 
   render() {
-    const numOctaves = this.props.numOctaves || 3;
+    const numOctaves = this.props.numOctaves || 1;
     const startingOctave = this.props.startingOctave || 3;
     const keys = _.range(12 * startingOctave, 12 * (startingOctave + numOctaves));
 
@@ -84,8 +84,8 @@ export default class PianoPad extends React.Component {
       <PianoPadContainer>
         {_.map(keys, k => (
           _.indexOf(blackKeys, k % 12) > -1 ?
-            <PianoBlackKey onClick={this.onPianoKeyPushed.bind(this, k)}></PianoBlackKey>:
-            <PianoWhiteKey onClick={this.onPianoKeyPushed.bind(this, k)}></PianoWhiteKey>
+            <PianoBlackKey onClick={this.onPianoKeyPushed.bind(this, k)} key={k}></PianoBlackKey>:
+            <PianoWhiteKey onClick={this.onPianoKeyPushed.bind(this, k)} key={k}></PianoWhiteKey>
         ))}
       </PianoPadContainer>
     );

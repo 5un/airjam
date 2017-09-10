@@ -78,9 +78,9 @@ export default class MotionController extends React.Component {
         }
         {debug &&
           <div>
-            <div id="motion-debug" style={{ fontSize: '18px;'}}>
+            <div id="motion-debug" style={{ fontSize: '18px'}}>
             </div>
-            <div id="orientation-debug" style={{ fontSize: '18px;' }}>
+            <div id="orientation-debug" style={{ fontSize: '18px' }}>
             </div>
           </div>
 

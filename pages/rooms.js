@@ -2,6 +2,7 @@
 import React from 'react'
 import Page from '../components/page'
 import MidiMachine from '../components/midi-machine'
+import WebAudioFont from '../components/web-audio-font'
 import PianoPad from '../components/piano-pad'
 import MotionController from '../components/motion-controller'
 import RTM from 'satori-rtm-sdk';
@@ -90,12 +91,6 @@ export default class Rooms extends React.Component {
   }
 
   onNotePushed(note) {
-    // if(this.midiMachine) {
-    //   this.onMotionOrOrientationChanged(
-    //     { acceleration: { x: 5.0, y: 0.0, z: 0.0 } }, 
-    //     { alpha: -180.0, beta: 45.35, gamma: -24.45 }
-    //   );
-    // }
     if(this.midiMachine) {
       this.midiMachine.playNote(note);
 
@@ -158,6 +153,12 @@ export default class Rooms extends React.Component {
     
   }
 
+  onSoundFontsLoaded() {
+    if(this.webAudioFont) {
+      this.webAudioFont.startBeat();
+    }
+  }
+
   render() {
     const { clientConnected } = this.state; 
     return (
@@ -171,6 +172,7 @@ export default class Rooms extends React.Component {
           <div>Not Connected</div>
         }
         <MidiMachine ref={(midiMachine) => { this.midiMachine = midiMachine; }}/>
+        <WebAudioFont ref={(webAudioFont) => { this.webAudioFont = webAudioFont; }} onSoundFontsLoaded={this.onSoundFontsLoaded.bind(this)}/>
         <PianoPad onNotePushed={this.onNotePushed.bind(this)}/>
         <MotionController onMotionOrOrientationChanged={this.onMotionOrOrientationChanged.bind(this)}/>
       </Page>
