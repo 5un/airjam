@@ -11,10 +11,11 @@ export default class UserTracks extends React.Component {
 
   render() {
     const { tracks } = this.props;
+    console.log(tracks);
     return (
       <div>
-        {_.map(tracks, track => (
-          <UserTrack track={track} />
+        {_.map(tracks, (track, name) => (
+          <UserTrack track={track} key={name} />
         ))}
       </div>
     );

@@ -58,7 +58,7 @@ export default class Rooms extends React.Component {
       },
       showInstrumentsBar: false,
       tuneCorrectionOn: false,
-      members: []
+      members: {}
     };
 
     this.history = {
@@ -90,9 +90,6 @@ export default class Rooms extends React.Component {
       _.map(messages, (msg) => {
         // TODO handle other instr
         if((msg.type === 'modified' && this.state.tuneCorrectionOn) || (msg.type === 'note' && !this.state.tuneCorrectionOn)){
-          if(msg.type === 'modified'){
-            console.log(msg);
-          }
           const instrumentName = _.get(msg, 'instrument.name', 'piano');
           if(instrumentName === 'piano') {
             if (this.webAudioFont) {
@@ -103,6 +100,17 @@ export default class Rooms extends React.Component {
               this.webAudioFont.playDrumsWithLabel(msg.note, msg.volume);
             }
           }
+
+          //Data Viz
+          const newNote = { ... msg, 
+            noteColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`,
+            size: (Math.floor(Math.random() * 40) + 10)
+          };
+          const oldMember = _.get(this.state.members, msg.user.name, { name: msg.user.name, notes: []});
+          const modifiedMember = {... oldMember, notes: _.concat(oldMember.notes, newNote)};
+          this.setState({ members: 
+            {... this.state.members, [msg.user.name]: modifiedMember }
+          });
 
         }
 
@@ -117,8 +125,12 @@ export default class Rooms extends React.Component {
       const members = this.state.members;
       const { messages } = pdu.body;
       _.map(messages, (msg) => {
-        if(!_.find(members, { name: msg.user.name })) {
-          this.setState({ members: _.concat(members, msg.user) });
+        if(!_.has(members, msg.user.name)){
+          const newMember = {
+            name: msg.user.name,
+            notes: []
+          };
+          this.setState({ members: {... members, [msg.user.name]: newMember }});
         }
       });
     });

@@ -15,6 +15,10 @@ const instruments = [
   {
     name: 'synth',
     label: 'Synth'
+  },
+  {
+    name: 'More',
+    label: '+'
   }
 ];
 
