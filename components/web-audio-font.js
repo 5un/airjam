@@ -7,8 +7,11 @@ const scriptList = [
   'https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js',
   'https://surikov.github.io/webaudiofontdata/sound/12836_6_JCLive_sf2_file.js',
   'https://surikov.github.io/webaudiofontdata/sound/12840_6_JCLive_sf2_file.js',
+  'https://surikov.github.io/webaudiofontdata/sound/12841_6_JCLive_sf2_file.js',
   'https://surikov.github.io/webaudiofontdata/sound/12842_6_JCLive_sf2_file.js',
   'https://surikov.github.io/webaudiofontdata/sound/12846_6_JCLive_sf2_file.js',
+  'https://surikov.github.io/webaudiofontdata/sound/12848_6_JCLive_sf2_file.js',
+  'https://surikov.github.io/webaudiofontdata/sound/12851_6_JCLive_sf2_file.js',
   'https://surikov.github.io/webaudiofontdata/sound/0390_Aspirin_sf2_file.js',
   'https://surikov.github.io/webaudiofontdata/sound/0480_Chaos_sf2_file.js',
   'https://surikov.github.io/webaudiofontdata/sound/0550_Chaos_sf2_file.js',
@@ -48,6 +51,8 @@ export default class WebAudioFont extends React.Component {
         this.player.loader.decodeAfterLoading(this.audioContext, '_tone_0390_Aspirin_sf2_file');
         this.player.loader.decodeAfterLoading(this.audioContext, '_tone_0480_Chaos_sf2_file');
         this.player.loader.decodeAfterLoading(this.audioContext, '_drum_46_6_JCLive_sf2_file');
+        this.player.loader.decodeAfterLoading(this.audioContext, '_drum_48_6_JCLive_sf2_file');
+        this.player.loader.decodeAfterLoading(this.audioContext, '_drum_51_6_JCLive_sf2_file');
         this.player.loader.decodeAfterLoading(this.audioContext, '_tone_0550_Chaos_sf2_file');
         this.player.loader.decodeAfterLoading(this.audioContext, '_tone_0090_JCLive_sf2_file');
         
@@ -136,47 +141,35 @@ export default class WebAudioFont extends React.Component {
   }
 
   playNote(pitch) {
-    this.player.queueWaveTable(
-      this.audioContext, 
-      this.audioContext.destination, 
-      _tone_0090_JCLive_sf2_file, 
-      0, pitch, 0.75
-    );
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _tone_0090_JCLive_sf2_file, 0, pitch, 0.75);
   }
 
   playSnare() {
-    this.player.queueWaveTable(
-      this.audioContext,
-      this.audioContext.destination, 
-      _drum_40_6_JCLive_sf2_file, 
-      0, 35, 3
-    );
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_40_6_JCLive_sf2_file, 0, 35, 3);
   }
 
   playHihat() {
-    this.player.queueWaveTable(
-      this.audioContext,
-      this.audioContext.destination, 
-      _drum_46_6_JCLive_sf2_file, 
-      0, 35, 3
-    );
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_46_6_JCLive_sf2_file, 0, 35, 3);
+  }
+
+  playBassDrum() {
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_36_6_JCLive_sf2_file, 0, 36, 3);
   }
 
   playTom() {
-    this.player.queueWaveTable(
-      this.audioContext,
-      this.audioContext.destination, 
-      _drum_36_6_JCLive_sf2_file, 
-      0, 35, 3
-    );
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_48_6_JCLive_sf2_file, 0, 35, 3);
+  }
+
+  playRide() {
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_51_6_JCLive_sf2_file, 0, 51, 3);
   }
 
   playDrumsWithLabel(label) {
     if(label === 'snare') this.playSnare();
     else if(label === 'tom') this.playTom();
     else if(label === 'hihat') this.playHihat();
-    else if(label === 'ride') this.playHihat();
-    else if(label === 'bassdrum') this.playTom();
+    else if(label === 'ride') this.playRide();
+    else if(label === 'bassdrum') this.playBassDrum();
   }
 
 

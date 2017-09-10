@@ -51,16 +51,16 @@ export default class DrumPads extends React.Component {
 
     return (
       <DrumPadContainer>
-        <RedDrumPad onClick={this.onButtonPushed.bind(this, 'snare')}>
+        <RedDrumPad onClick={this.onButtonPushed.bind(this, 'bassdrum')}>
 
         </RedDrumPad>
-        <GreenDrumPad onClick={this.onButtonPushed.bind(this, 'ride')}>
+        <GreenDrumPad onClick={this.onButtonPushed.bind(this, 'snare')}>
           
         </GreenDrumPad>
         <BlueDrumPad onClick={this.onButtonPushed.bind(this, 'tom')}>
           
         </BlueDrumPad>
-        <YellowDrumPad onClick={this.onButtonPushed.bind(this, 'bass')}>
+        <YellowDrumPad onClick={this.onButtonPushed.bind(this, 'ride')}>
           
         </YellowDrumPad>
       </DrumPadContainer>
