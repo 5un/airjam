@@ -27,6 +27,17 @@ export const Button = styled.button `
   font-size: 18px;
 `
 
+export const SmallButton = styled.button `
+  appearance: none;
+  background-color: transparent;
+  color: white;
+  padding: 5px 10px;
+  border: 2px solid white;
+  border-radius: 4px;
+  font-family: Montserrat;
+  font-size: 14px;
+`
+
 export const InputText = styled.input`
   backgrond: white;
   border: 0;

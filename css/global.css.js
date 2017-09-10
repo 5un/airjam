@@ -22,6 +22,27 @@ h1, h2, h3, h4, h5 {
   font-weight: 500;
 }
 
+@media only screen and (max-width: 767px) {
+  .only-mobile {
+    display: block;
+  }
+
+  .only-desktop {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .only-mobile {
+    display: none;
+  }
+
+  .only-desktop {
+    display: block;
+  }
+}
+
+
 /* Position and sizing of burger button */
 .bm-burger-button {
   position: fixed;

@@ -7,7 +7,7 @@ import InstrumentsBar from '../components/instruments-bar'
 import PianoPad from '../components/piano-pad'
 import DrumPads from '../components/drum-pads'
 import MotionController from '../components/motion-controller'
-import { Row, Col, Button } from '../components/elements'
+import { Row, Col, Button, SmallButton } from '../components/elements'
 import RTM from 'satori-rtm-sdk';
 import styled from 'styled-components'
 import mapMotion from '../lib/motion-mapper'
@@ -44,6 +44,10 @@ const InnerWrapper = styled.div`
   padding: 20px 40px;
 `;
 
+const Clear = styled.div`
+  clear: both;
+`;
+
 export default class Rooms extends React.Component {
 
   constructor(props) {
@@ -58,6 +62,7 @@ export default class Rooms extends React.Component {
       },
       showInstrumentsBar: false,
       tuneCorrectionOn: false,
+      backingTrackOn: false,
       members: {}
     };
 
@@ -266,6 +271,11 @@ export default class Rooms extends React.Component {
     this.setState({ tuneCorrectionOn: !tuneCorrectionOn });
   }
 
+  onBackingTrackButtonClicked() {
+    const { backingTrackOn } = this.state;
+    this.setState({ backingTrackOn: !backingTrackOn });
+  }
+
   onMotionOrOrientationChanged(motion, orientation) {
     const drumFuncs = {
       bassdrum: () => { this.sendDrumNote('bassdrum'); },
@@ -287,7 +297,7 @@ export default class Rooms extends React.Component {
   }
 
   render() {
-    const { clientConnected, currentInstrument, showInstrumentsBar, members, tuneCorrectionOn } = this.state; 
+    const { clientConnected, currentInstrument, showInstrumentsBar, members, tuneCorrectionOn, backingTrackOn } = this.state; 
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     return (
       <Page>
@@ -295,23 +305,50 @@ export default class Rooms extends React.Component {
           <TopRight>
             <Row>
               <Col>
-                <Button style={{ marginRight: '10px' }} onClick={this.onTuneCorrectionButtonClicked.bind(this)}>Auto Correction ({ tuneCorrectionOn ? 'On': 'Off'})</Button>
+                <div className="only-desktop">
+                  <Button style={{ marginRight: '10px' }} onClick={this.onBackingTrackButtonClicked.bind(this)}>Backing Track ({ backingTrackOn ? 'On': 'Off'})</Button>
+                </div>
+                <div className="only-mobile">
+                  <Button style={{ marginRight: '10px' }} onClick={this.onBackingTrackButtonClicked.bind(this)}>BT. ({ backingTrackOn ? 'O': 'X'})</Button>
+                </div>
               </Col>
               <Col>
-                <Button style={{ marginRight: '10px' }} onClick={this.onInstrumentButtonClicked.bind(this)}>Instruments</Button>
+                <div className="only-desktop">
+                  <Button style={{ marginRight: '10px' }} onClick={this.onTuneCorrectionButtonClicked.bind(this)}>Auto Correction ({ tuneCorrectionOn ? 'On': 'Off'})</Button>
+                </div>
+                <div className="only-mobile">
+                  <Button style={{ marginRight: '10px' }} onClick={this.onTuneCorrectionButtonClicked.bind(this)}>AC. ({ tuneCorrectionOn ? 'O': 'X'})</Button>
+                </div>
               </Col>
               <Col>
+                <div className="only-desktop">
+                  <Button style={{ marginRight: '10px' }} onClick={this.onInstrumentButtonClicked.bind(this)}>Instruments</Button>
+                </div>
+                <div className="only-mobile">
+                  <Button style={{ marginRight: '10px' }} onClick={this.onInstrumentButtonClicked.bind(this)}>Ins.</Button>
+                </div>
+              </Col>
+              <Col>
+                <div className="only-desktop">
                 {clientConnected &&
                   <div>Connected <ClientConnectedIndicator/></div>
                 }
                 {!clientConnected &&
                   <div>Not Connected</div>
                 }
+                </div>
               </Col>
             </Row>
           </TopRight>
-          <h2>Welcome to Room {roomId} 🎸</h2>
-          <p>Start jamming right away</p>
+          <div className="only-desktop">
+            <h2>Welcome to Room {roomId} 🎸</h2>
+            <p>Start jamming right away</p>
+          </div>
+          <Clear>
+            <div className="only-mobile">
+              <h2>Room {roomId} 🎸</h2>
+            </div>
+          </Clear>
           <UserTracks tracks={members}/>
         </InnerWrapper>
         <WebAudioFont ref={(webAudioFont) => { this.webAudioFont = webAudioFont; }} onSoundFontsLoaded={this.onSoundFontsLoaded.bind(this)}/>
