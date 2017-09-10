@@ -4,6 +4,8 @@ import _ from 'lodash'
 
 const debug = false;
 
+const ANCHOR_ALPHA_CALIBRATION_DURATION = 2000;
+
 export default class MotionController extends React.Component {
 
   constructor(props) {
@@ -13,13 +15,18 @@ export default class MotionController extends React.Component {
       orientation: {}
     };
     this.motion = {};
-    this.orientation = {};
+    this.orientation = { anchorAlpha: 0 };
+    this.anchorAlpha = 0;
   }
 
   onOrientationChanged(e) {
-    this.orientation = { alpha: e.alpha, beta: e.beta, gamma: e.gamma, absolute: e.absolute };
-    console.log('orientation');
-    console.log(e);
+    const timeSinceCalibrationStarted = (new Date()) - this.calibrationStartTime;
+    this.orientation = { alpha: e.alpha, beta: e.beta, gamma: e.gamma, absolute: e.absolute, anchorAlpha: this.orientation.anchorAlpha };
+    if(timeSinceCalibrationStarted < ANCHOR_ALPHA_CALIBRATION_DURATION) {
+      this.orientation.anchorAlpha = e.alpha;
+    }
+    // console.log('orientation');
+    // console.log(e);
     if(this.props.onMotionOrOrientationChanged) {
       this.props.onMotionOrOrientationChanged(this.motion, this.orientation);
     }
@@ -31,8 +38,8 @@ export default class MotionController extends React.Component {
       accelerationIncludingGravity: e.accelerationIncludingGravity,
       rotationRate: e.rotationRate
     } 
-    console.log('motion');
-    console.log(e);
+    // console.log('motion');
+    // console.log(e);
     if(this.props.onMotionOrOrientationChanged) {
       this.props.onMotionOrOrientationChanged(this.motion, this.orientation);
     }
@@ -44,16 +51,16 @@ export default class MotionController extends React.Component {
       //window.addEventListener('devicemotion', (e) => (this.onMotionChanged(e)));
       let element;
       window.ondevicemotion = (e) => {
-        element = document.getElementById('motion-debug');
-        element.innerHTML = `${e.acceleration.x}, ${e.acceleration.y}, ${e.acceleration.z}`;
+        // element = document.getElementById('motion-debug');
+        // element.innerHTML = `${e.acceleration.x}, ${e.acceleration.y}, ${e.acceleration.z}`;
         this.onMotionChanged(e);
       };
       window.ondeviceorientation = (e) => {
-        element = document.getElementById('orientation-debug');
-        element.innerHTML = `${e.alpha}, ${e.beta}, ${e.gamma}`;
+        // element = document.getElementById('orientation-debug');
+        // element.innerHTML = `${e.alpha}, ${e.beta}, ${e.gamma}`;
         this.onOrientationChanged(e);
       };
-
+      this.calibrationStartTime = new Date();
     }
   }
 

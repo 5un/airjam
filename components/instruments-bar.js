@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
+import { Button } from './elements'
 
 const instruments = [
   {
@@ -23,10 +24,8 @@ const InstrumentsBarContainer = styled.div `
   padding: 20px;
 `
 
-const InstrumentButton = styled.button`
+const InstrumentButton = Button.extend`
   display: inline-block;
-  width: 80px;
-  height: 80px;
   margin: 5px;
 `;
 

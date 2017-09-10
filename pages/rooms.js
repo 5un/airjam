@@ -19,6 +19,7 @@ const rtm = new RTM('wss://q5241z7b.api.satori.com', 'CD3108D6a79CAE30b8E8C37eba
 
 const MOTION_HISTORY_SIZE = 10;
 const MAX_SAMPLING_RATE = 500;
+const PRESENCE_MESSAGE_INTERVAL = 5000;
 
 const TopRight = styled.div`
   float: right;
@@ -55,7 +56,8 @@ export default class Rooms extends React.Component {
       currentUser: {
         name: 'Lorem Ipsum'
       },
-      showInstrumentsBar: false
+      showInstrumentsBar: false,
+      members: []
     };
 
     this.history = {
@@ -72,12 +74,16 @@ export default class Rooms extends React.Component {
 
   componentDidMount() {
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
+    const username = _.get(this.props, 'url.query.username', 'Unknown');
     const channelName = `airjam-${roomId}`
     var channel = rtm.subscribe(channelName, RTM.SubscriptionMode.SIMPLE);
+    var presenceChannel = rtm.subscribe(`${channelName}-presence`, RTM.SubscriptionMode.SIMPLE, {
+      filter: 'SELECT * FROM `' + channelName + '` WHERE type = "presence"',
+      history: { age: 60 },
+    });
 
     // Do not subscribe twice
     channel.on("rtm/subscription/data", (pdu) => {
-      pdu.body.messages.forEach(console.log);
       const { messages } = pdu.body;
       // Play Note Here
       _.map(messages, (msg) => {
@@ -98,24 +104,37 @@ export default class Rooms extends React.Component {
       
     });
 
+    presenceChannel.on("rtm/subscription/data", (pdu) => {
+      const members = this.state.members;
+      const { messages } = pdu.body;
+      _.map(messages, (msg) => {
+        if(!_.find(members, { name: msg.user.name })) {
+          this.setState({ members: _.concat(members, msg.user) });
+        }
+      });
+    });
+
     // client enters 'connected' state
     rtm.on("enter-connected", () => {
       this.setState({ clientConnected: true });
       //rtm.publish("your-channel", {key: "value"});
+      this.sendPresenceMessage();
+      setInterval(() => {
+        this.sendPresenceMessage();
+      }, PRESENCE_MESSAGE_INTERVAL)
     });
 
     // client receives any PDU and PDU is passed as a parameter
     rtm.on("data", (pdu) => {
       if (pdu.action.endsWith("/error")) {
-          rtm.restart();
+        rtm.restart();
       }
     });
 
     // start the client
     rtm.start();
-
-    this.channel = channel;
     this.rtm = rtm;
+    this.channel = channel;
 
     // setInterval(() => {
     //   this.onMotionOrOrientationChanged(
@@ -126,6 +145,8 @@ export default class Rooms extends React.Component {
     //     { alpha: Math.random() * 360.0, beta: Math.random() * 360.0 - 180.0, gamma: Math.random() * 360.0 - 180.0 }
     //   );
     // }, 10);
+
+    this.setState({ currentUser: { username } });
   }
 
   onNotePushed(note) {
@@ -133,7 +154,7 @@ export default class Rooms extends React.Component {
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     const channelName = `airjam-${roomId}`
     if(this.rtm) {
-      const msg = { user: currentUser, instrument: currentInstrument, note: note };
+      const msg = { user: currentUser, instrument: currentInstrument, note: note, volume: 0.5 };
       this.rtm.publish(channelName, msg , (pdu) => {
         if (pdu.action === 'rtm/publish/ok') {
           console.log('Publish confirmed');
@@ -155,7 +176,7 @@ export default class Rooms extends React.Component {
     const channelName = `airjam-${roomId}`
 
     if(this.rtm) {
-      const msg = { user: currentUser, instrument: currentInstrument, note: label };
+      const msg = { user: currentUser, instrument: currentInstrument, note: label, volume: 0.5 };
       this.rtm.publish(channelName, msg , (pdu) => {
         if (pdu.action === 'rtm/publish/ok') {
           console.log('Publish confirmed');
@@ -163,6 +184,19 @@ export default class Rooms extends React.Component {
           console.log('Failed to publish. RTM replied with the error ' +
               pdu.body.error + ': ' + pdu.body.reason);
         }
+      });
+    }
+  }
+
+  sendPresenceMessage() {
+    const { currentUser, currentInstrument } = this.state;
+    const roomId = _.get(this.props, 'url.query.id', 'Unknown');
+    const channelName = `airjam-${roomId}`
+    if(this.rtm) {
+      rtm.publish(channelName, {
+        type: 'presence',
+        user: currentUser,
+        instrument: currentInstrument
       });
     }
   }
@@ -215,12 +249,12 @@ export default class Rooms extends React.Component {
 
   onSoundFontsLoaded() {
     if(this.webAudioFont) {
-      this.webAudioFont.startBeat();
+      // this.webAudioFont.startBeat();
     }
   }
 
   render() {
-    const { clientConnected, currentInstrument, showInstrumentsBar } = this.state; 
+    const { clientConnected, currentInstrument, showInstrumentsBar, members } = this.state; 
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     return (
       <Page>
@@ -242,7 +276,7 @@ export default class Rooms extends React.Component {
           </TopRight>
           <h2>Welcome to Room {roomId}</h2>
           <p>Start jamming right away</p>
-          <UserTracks tracks={users}/>
+          <UserTracks tracks={members}/>
         </InnerWrapper>
         <WebAudioFont ref={(webAudioFont) => { this.webAudioFont = webAudioFont; }} onSoundFontsLoaded={this.onSoundFontsLoaded.bind(this)}/>
         <BottomPanel>
