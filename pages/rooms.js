@@ -8,6 +8,7 @@ import InstrumentsBar from '../components/instruments-bar'
 import PianoPad from '../components/piano-pad'
 import DrumPads from '../components/drum-pads'
 import MotionController from '../components/motion-controller'
+import { Row, Col, Button } from '../components/elements'
 import RTM from 'satori-rtm-sdk';
 import styled from 'styled-components'
 import mapMotion from '../lib/motion-mapper'
@@ -21,7 +22,7 @@ const channelName = 'jam-session-1'
 const MOTION_HISTORY_SIZE = 10;
 const MAX_SAMPLING_RATE = 500;
 
-const ConnectionStatus = styled.div`
+const TopRight = styled.div`
   float: right;
 `;
 
@@ -117,8 +118,6 @@ export default class Rooms extends React.Component {
 
   onNotePushed(note) {
     if(this.midiMachine) {
-      this.midiMachine.playNote(note);
-
       if(this.rtm) {
         const msg = { note: note };
         this.rtm.publish(channelName, msg , (pdu) => {
@@ -134,6 +133,7 @@ export default class Rooms extends React.Component {
   }
 
   onDrumsButtonPushed(label) {
+    // TODO send instead
     if(label === 'snare') this.webAudioFont.playSnare();
     if(label === 'bass') this.webAudioFont.playBass();
     if(label === 'tom') this.webAudioFont.playTom();
@@ -167,10 +167,16 @@ export default class Rooms extends React.Component {
     this.setState({ currentInstrument: instrument });
   }
 
+  onInstrumentButtonClicked() {
+    const { showInstrumentsBar } = this.state;
+    this.setState({ showInstrumentsBar: !showInstrumentsBar });
+  }
+
   onMotionOrOrientationChanged(motion, orientation) {
     if(this.midiMachine) {
       const drumFuncs = {
         tom: () => {
+          // TODO send to mapMotion instead
           this.webAudioFont.playTom();
         },
         snare: () => {
@@ -201,15 +207,22 @@ export default class Rooms extends React.Component {
     return (
       <Page>
         <InnerWrapper>
-          <ConnectionStatus>
-          {clientConnected &&
-            <div>Connected <ClientConnectedIndicator/></div>
-          }
-          {!clientConnected &&
-            <div>Not Connected</div>
-          }
-          </ConnectionStatus>
-          <h1>Welcome to Room {roomId}</h1>
+          <TopRight>
+            <Row>
+              <Col>
+                <Button style={{ marginRight: '10px' }} onClick={this.onInstrumentButtonClicked.bind(this)}>Instruments</Button>
+              </Col>
+              <Col>
+                {clientConnected &&
+                  <div>Connected <ClientConnectedIndicator/></div>
+                }
+                {!clientConnected &&
+                  <div>Not Connected</div>
+                }
+              </Col>
+            </Row>
+          </TopRight>
+          <h2>Welcome to Room {roomId}</h2>
           <p>Start jamming right away</p>
           <UserTracks tracks={users}/>
         </InnerWrapper>
