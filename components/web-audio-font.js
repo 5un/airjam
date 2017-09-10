@@ -140,36 +140,42 @@ export default class WebAudioFont extends React.Component {
     }
   }
 
-  playNote(pitch) {
-    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _tone_0090_JCLive_sf2_file, 0, pitch, 0.75);
+  playNote(pitch, volume) {
+    const vol = volume || 1.0;
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _tone_0090_JCLive_sf2_file, 0, pitch, 0.75, vol);
   }
 
-  playSnare() {
-    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_40_6_JCLive_sf2_file, 0, 35, 3);
+  playSnare(volume) {
+    const vol = volume || 1.0;
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_40_6_JCLive_sf2_file, 0, 35, 3, vol);
   }
 
-  playHihat() {
-    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_46_6_JCLive_sf2_file, 0, 35, 3);
+  playHihat(volume) {
+    const vol = volume || 1.0;
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_46_6_JCLive_sf2_file, 0, 35, 3, vol);
   }
 
-  playBassDrum() {
-    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_36_6_JCLive_sf2_file, 0, 36, 3);
+  playBassDrum(volume) {
+    const vol = volume || 1.0;
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_36_6_JCLive_sf2_file, 0, 36, 3, vol);
   }
 
-  playTom() {
-    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_48_6_JCLive_sf2_file, 0, 35, 3);
+  playTom(volume) {
+    const vol = volume || 1.0;
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_48_6_JCLive_sf2_file, 0, 35, 3, vol);
   }
 
-  playRide() {
-    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_51_6_JCLive_sf2_file, 0, 51, 3);
+  playRide(volume) {
+    const vol = volume || 1.0;
+    this.player.queueWaveTable(this.audioContext, this.audioContext.destination, _drum_51_6_JCLive_sf2_file, 0, 51, 3, vol);
   }
 
-  playDrumsWithLabel(label) {
-    if(label === 'snare') this.playSnare();
-    else if(label === 'tom') this.playTom();
-    else if(label === 'hihat') this.playHihat();
-    else if(label === 'ride') this.playRide();
-    else if(label === 'bassdrum') this.playBassDrum();
+  playDrumsWithLabel(label, volume) {
+    if(label === 'snare') this.playSnare(volume);
+    else if(label === 'tom') this.playTom(volume);
+    else if(label === 'hihat') this.playHihat(volume);
+    else if(label === 'ride') this.playRide(volume);
+    else if(label === 'bassdrum') this.playBassDrum(volume);
   }
 
 

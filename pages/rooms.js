@@ -57,6 +57,7 @@ export default class Rooms extends React.Component {
         name: 'Lorem Ipsum'
       },
       showInstrumentsBar: false,
+      tuneCorrectionOn: false,
       members: []
     };
 
@@ -88,16 +89,24 @@ export default class Rooms extends React.Component {
       // Play Note Here
       _.map(messages, (msg) => {
         // TODO handle other instr
-        const instrumentName = _.get(msg, 'instrument.name', 'piano');
-        if(instrumentName === 'piano') {
-          if (this.webAudioFont) {
-            this.webAudioFont.playNote(msg.note);
+        if((msg.type === 'modified' && this.state.tuneCorrectionOn) || (msg.type === 'note' && !this.state.tuneCorrectionOn)){
+          if(msg.type === 'modified'){
+            console.log(msg);
           }
-        } else if(instrumentName === 'drums') {
-          if (this.webAudioFont) {
-            this.webAudioFont.playDrumsWithLabel(msg.note);
+          const instrumentName = _.get(msg, 'instrument.name', 'piano');
+          if(instrumentName === 'piano') {
+            if (this.webAudioFont) {
+              this.webAudioFont.playNote(msg.note, msg.volume);
+            }
+          } else if(instrumentName === 'drums') {
+            if (this.webAudioFont) {
+              this.webAudioFont.playDrumsWithLabel(msg.note, msg.volume);
+            }
           }
+
         }
+
+        
         
         // Add to dataviz layer
       });
@@ -154,7 +163,7 @@ export default class Rooms extends React.Component {
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     const channelName = `airjam-${roomId}`
     if(this.rtm) {
-      const msg = { user: currentUser, instrument: currentInstrument, note: note, volume: 0.5 };
+      const msg = { type: 'note', user: currentUser, instrument: currentInstrument, note: note, volume: 0.5 };
       this.rtm.publish(channelName, msg , (pdu) => {
         if (pdu.action === 'rtm/publish/ok') {
           console.log('Publish confirmed');
@@ -176,7 +185,7 @@ export default class Rooms extends React.Component {
     const channelName = `airjam-${roomId}`
 
     if(this.rtm) {
-      const msg = { user: currentUser, instrument: currentInstrument, note: label, volume: 0.5 };
+      const msg = { type: 'note', user: currentUser, instrument: currentInstrument, note: label, volume: 0.5 };
       this.rtm.publish(channelName, msg , (pdu) => {
         if (pdu.action === 'rtm/publish/ok') {
           console.log('Publish confirmed');
@@ -235,6 +244,11 @@ export default class Rooms extends React.Component {
     this.setState({ showInstrumentsBar: !showInstrumentsBar });
   }
 
+  onTuneCorrectionButtonClicked() {
+    const { tuneCorrectionOn } = this.state;
+    this.setState({ tuneCorrectionOn: !tuneCorrectionOn });
+  }
+
   onMotionOrOrientationChanged(motion, orientation) {
     const drumFuncs = {
       bassdrum: () => { this.sendDrumNote('bassdrum'); },
@@ -256,13 +270,16 @@ export default class Rooms extends React.Component {
   }
 
   render() {
-    const { clientConnected, currentInstrument, showInstrumentsBar, members } = this.state; 
+    const { clientConnected, currentInstrument, showInstrumentsBar, members, tuneCorrectionOn } = this.state; 
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     return (
       <Page>
         <InnerWrapper>
           <TopRight>
             <Row>
+              <Col>
+                <Button style={{ marginRight: '10px' }} onClick={this.onTuneCorrectionButtonClicked.bind(this)}>Auto Correction ({ tuneCorrectionOn ? 'On': 'Off'})</Button>
+              </Col>
               <Col>
                 <Button style={{ marginRight: '10px' }} onClick={this.onInstrumentButtonClicked.bind(this)}>Instruments</Button>
               </Col>
