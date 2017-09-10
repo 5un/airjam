@@ -54,6 +54,9 @@ export default class Rooms extends React.Component {
       currentInstrument: {
         name: 'piano'
       },
+      currentUser: {
+        name: 'Lorem Ipsum'
+      },
       showInstrumentsBar: false
     };
 
@@ -78,9 +81,19 @@ export default class Rooms extends React.Component {
       const { messages } = pdu.body;
       // Play Note Here
       _.map(messages, (msg) => {
-        if(this.midiMachine) {
-          this.midiMachine.playNote(msg.note);
+        // TODO handle other instr
+        const instrumentName = _.get(msg, 'instrument.name', 'piano');
+        if(instrumentName === 'piano') {
+          if (this.webAudioFont) {
+            this.webAudioFont.playNote(msg.note);
+          }
+        } else if(instrumentName === 'drums') {
+          if (this.webAudioFont) {
+            this.webAudioFont.playDrumsWithLabel(msg.note);
+          }
         }
+        
+        // Add to dataviz layer
       });
       
     });
@@ -89,7 +102,6 @@ export default class Rooms extends React.Component {
     rtm.on("enter-connected", () => {
       this.setState({ clientConnected: true });
       //rtm.publish("your-channel", {key: "value"});
-
     });
 
     // client receives any PDU and PDU is passed as a parameter
@@ -117,27 +129,37 @@ export default class Rooms extends React.Component {
   }
 
   onNotePushed(note) {
-    if(this.midiMachine) {
-      if(this.rtm) {
-        const msg = { note: note };
-        this.rtm.publish(channelName, msg , (pdu) => {
-          if (pdu.action === 'rtm/publish/ok') {
-            console.log('Publish confirmed');
-          } else {
-            console.log('Failed to publish. RTM replied with the error ' +
-                pdu.body.error + ': ' + pdu.body.reason);
-          }
-        });
-      }
+    const { currentUser, currentInstrument } = this.state;
+    if(this.rtm) {
+      const msg = { user: currentUser, instrument: currentInstrument, note: note };
+      this.rtm.publish(channelName, msg , (pdu) => {
+        if (pdu.action === 'rtm/publish/ok') {
+          console.log('Publish confirmed');
+        } else {
+          console.log('Failed to publish. RTM replied with the error ' +
+              pdu.body.error + ': ' + pdu.body.reason);
+        }
+      });
     }
   }
 
   onDrumsButtonPushed(label) {
-    // TODO send instead
-    if(label === 'snare') this.webAudioFont.playSnare();
-    if(label === 'bass') this.webAudioFont.playBass();
-    if(label === 'tom') this.webAudioFont.playTom();
-    if(label === 'ride') this.webAudioFont.playRide();
+    this.sendDrumNote(label);
+  }
+
+  sendDrumNote(label) {
+    const { currentUser, currentInstrument } = this.state;
+    if(this.rtm) {
+      const msg = { user: currentUser, instrument: currentInstrument, note: label };
+      this.rtm.publish(channelName, msg , (pdu) => {
+        if (pdu.action === 'rtm/publish/ok') {
+          console.log('Publish confirmed');
+        } else {
+          console.log('Failed to publish. RTM replied with the error ' +
+              pdu.body.error + ': ' + pdu.body.reason);
+        }
+      });
+    }
   }
 
   updateMotionHistory(motion, orientation) {
@@ -175,16 +197,9 @@ export default class Rooms extends React.Component {
   onMotionOrOrientationChanged(motion, orientation) {
     if(this.midiMachine) {
       const drumFuncs = {
-        tom: () => {
-          // TODO send to mapMotion instead
-          this.webAudioFont.playTom();
-        },
-        snare: () => {
-          this.webAudioFont.playSnare();
-        }, 
-        ride: () => {
-          this.webAudioFont.playHihat();
-        }
+        tom: () => { this.sendDrumNote('tom'); },
+        snare: () => { this.sendDrumNote('snare'); }, 
+        ride: () => { this.sendDrumNote('ride'); }
       };
       const triggered = mapMotion(motion, orientation, this.history.motion, this.history.orientation, (new Date() - this.timeOfLastTrigger), drumFuncs);
       if(triggered) {
@@ -197,7 +212,7 @@ export default class Rooms extends React.Component {
 
   onSoundFontsLoaded() {
     if(this.webAudioFont) {
-      // this.webAudioFont.startBeat();
+      this.webAudioFont.startBeat();
     }
   }
 

@@ -11,7 +11,8 @@ const scriptList = [
   'https://surikov.github.io/webaudiofontdata/sound/12846_6_JCLive_sf2_file.js',
   'https://surikov.github.io/webaudiofontdata/sound/0390_Aspirin_sf2_file.js',
   'https://surikov.github.io/webaudiofontdata/sound/0480_Chaos_sf2_file.js',
-  'https://surikov.github.io/webaudiofontdata/sound/0550_Chaos_sf2_file.js'
+  'https://surikov.github.io/webaudiofontdata/sound/0550_Chaos_sf2_file.js',
+  'https://surikov.github.io/webaudiofontdata/sound/0090_JCLive_sf2_file.js',
 ];
 
 export default class WebAudioFont extends React.Component {
@@ -48,6 +49,7 @@ export default class WebAudioFont extends React.Component {
         this.player.loader.decodeAfterLoading(this.audioContext, '_tone_0480_Chaos_sf2_file');
         this.player.loader.decodeAfterLoading(this.audioContext, '_drum_46_6_JCLive_sf2_file');
         this.player.loader.decodeAfterLoading(this.audioContext, '_tone_0550_Chaos_sf2_file');
+        this.player.loader.decodeAfterLoading(this.audioContext, '_tone_0090_JCLive_sf2_file');
         
         var gainDrums = this.audioContext.createGain();
         gainDrums.connect(this.audioContext.destination);
@@ -133,12 +135,12 @@ export default class WebAudioFont extends React.Component {
     }
   }
 
-  playNote() {
+  playNote(pitch) {
     this.player.queueWaveTable(
-      this.audioContext,
+      this.audioContext, 
       this.audioContext.destination, 
-      _drum_40_6_JCLive_sf2_file, 
-      0, 35, 3
+      _tone_0090_JCLive_sf2_file, 
+      0, pitch, 0.75
     );
   }
 
@@ -169,6 +171,13 @@ export default class WebAudioFont extends React.Component {
     );
   }
 
+  playDrumsWithLabel(label) {
+    if(label === 'snare') this.playSnare();
+    else if(label === 'tom') this.playTom();
+    else if(label === 'hihat') this.playHihat();
+    else if(label === 'ride') this.playHihat();
+    else if(label === 'bassdrum') this.playTom();
+  }
 
 
   render() {
