@@ -33,6 +33,7 @@ export default class WebAudioFont extends React.Component {
     this.beat.N = 4 * 60 / this.beat.bpm;
     this.beat.pieceLen = 4 * this.beat.N;
     this.beat.len = 1/16 * this.beat.N;
+    this.beat.volume = 0.4;
 
   }
 
@@ -106,7 +107,7 @@ export default class WebAudioFont extends React.Component {
     }
   }
 
-  startBeat() {
+  startBeat() {    
     if (this.beat.started) {
       console.log('started already');
     } else {
@@ -123,6 +124,10 @@ export default class WebAudioFont extends React.Component {
     }
   }
 
+  stopBeat() {
+    this.beat.notes = [];
+  }
+
   nextPiece() {
     const notes = this.beat.notes;
     for (var n = 0; n < notes.length; n++) {
@@ -133,7 +138,7 @@ export default class WebAudioFont extends React.Component {
             this.audioContext,
             beat[i].gain, beat[i].preset,
             this.beat.startTime + n * this.beat.len,
-            beat[i].pitch, beat[i].duration
+            beat[i].pitch, beat[i].duration, this.beat.volume
           );
         }
       }

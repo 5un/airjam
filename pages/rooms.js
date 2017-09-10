@@ -273,6 +273,11 @@ export default class Rooms extends React.Component {
 
   onBackingTrackButtonClicked() {
     const { backingTrackOn } = this.state;
+    if(!backingTrackOn) {
+      this.webAudioFont.startBeat();
+    } else {
+      this.webAudioFont.stopBeat();
+    }
     this.setState({ backingTrackOn: !backingTrackOn });
   }
 
@@ -351,7 +356,7 @@ export default class Rooms extends React.Component {
           </Clear>
           <UserTracks tracks={members}/>
         </InnerWrapper>
-        <WebAudioFont ref={(webAudioFont) => { this.webAudioFont = webAudioFont; }} onSoundFontsLoaded={this.onSoundFontsLoaded.bind(this)}/>
+        <WebAudioFont ref={(webAudioFont) => { this.webAudioFont = webAudioFont; }} onSoundFontsLoaded={this.onSoundFontsLoaded.bind(this)} backingTrackOn={backingTrackOn}/>
         <BottomPanel>
           {showInstrumentsBar && 
             <InstrumentsBar onInstrumentSelected={this.onInstrumentSelected.bind(this)} />
