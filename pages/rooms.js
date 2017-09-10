@@ -1,7 +1,6 @@
 
 import React from 'react'
 import Page from '../components/page'
-import MidiMachine from '../components/midi-machine'
 import WebAudioFont from '../components/web-audio-font'
 import UserTracks from '../components/user-tracks'
 import InstrumentsBar from '../components/instruments-bar'
@@ -154,7 +153,7 @@ export default class Rooms extends React.Component {
     const { currentUser, currentInstrument } = this.state;
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     const channelName = `airjam-${roomId}`
-    
+
     if(this.rtm) {
       const msg = { user: currentUser, instrument: currentInstrument, note: label };
       this.rtm.publish(channelName, msg , (pdu) => {
@@ -201,18 +200,16 @@ export default class Rooms extends React.Component {
   }
 
   onMotionOrOrientationChanged(motion, orientation) {
-    if(this.midiMachine) {
-      const drumFuncs = {
-        tom: () => { this.sendDrumNote('tom'); },
-        snare: () => { this.sendDrumNote('snare'); }, 
-        ride: () => { this.sendDrumNote('ride'); }
-      };
-      const triggered = mapMotion(motion, orientation, this.history.motion, this.history.orientation, (new Date() - this.timeOfLastTrigger), drumFuncs);
-      if(triggered) {
-        this.timeOfLastTrigger = new Date();
-      }
-      this.updateMotionHistory(motion, orientation);
+    const drumFuncs = {
+      tom: () => { this.sendDrumNote('tom'); },
+      snare: () => { this.sendDrumNote('snare'); }, 
+      ride: () => { this.sendDrumNote('ride'); }
+    };
+    const triggered = mapMotion(motion, orientation, this.history.motion, this.history.orientation, (new Date() - this.timeOfLastTrigger), drumFuncs);
+    if(triggered) {
+      this.timeOfLastTrigger = new Date();
     }
+    this.updateMotionHistory(motion, orientation);
     
   }
 
@@ -247,7 +244,6 @@ export default class Rooms extends React.Component {
           <p>Start jamming right away</p>
           <UserTracks tracks={users}/>
         </InnerWrapper>
-        <MidiMachine ref={(midiMachine) => { this.midiMachine = midiMachine; }}/>
         <WebAudioFont ref={(webAudioFont) => { this.webAudioFont = webAudioFont; }} onSoundFontsLoaded={this.onSoundFontsLoaded.bind(this)}/>
         <BottomPanel>
           {showInstrumentsBar && 
