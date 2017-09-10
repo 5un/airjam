@@ -104,10 +104,15 @@ export default class Rooms extends React.Component {
           //Data Viz
           const newNote = { ... msg, 
             noteColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`,
-            size: (Math.floor(Math.random() * 40) + 10)
+            size: (Math.floor(Math.random() * 40) + 10),
+            timestamp: (new Date()).getTime()
           };
           const oldMember = _.get(this.state.members, msg.user.name, { name: msg.user.name, notes: []});
-          const modifiedMember = {... oldMember, notes: _.concat(oldMember.notes, newNote)};
+          let newNotes = _.concat(oldMember.notes, newNote);
+          if(newNotes.length > 30) {
+            newNotes.splice(0, newNotes.length - 30);
+          }
+          const modifiedMember = {... oldMember, notes: newNotes};
           this.setState({ members: 
             {... this.state.members, [msg.user.name]: modifiedMember }
           });
@@ -305,7 +310,7 @@ export default class Rooms extends React.Component {
               </Col>
             </Row>
           </TopRight>
-          <h2>Welcome to Room {roomId}</h2>
+          <h2>Welcome to Room {roomId} 🎸</h2>
           <p>Start jamming right away</p>
           <UserTracks tracks={members}/>
         </InnerWrapper>

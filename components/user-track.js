@@ -71,7 +71,7 @@ export default class UserTrack extends React.Component {
         <UsernameLabel>{name}</UsernameLabel>
         <TrackLine />
         {_.map(notes, note => (
-          <NoteAnim size={note.size} noteColor={note.noteColor}>
+          <NoteAnim size={note.size} noteColor={note.noteColor} key={note.timestamp}>
           </NoteAnim>
         ))}
       </Item>

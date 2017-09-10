@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 const Nav = styled.nav `
   background: #674cb2;
   color: white;
-  padding: 10px 100px;
+  padding: 10px 60px;
 `;
 
 const MenuItem = styled.div `
@@ -37,13 +37,8 @@ export default class Page extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
         <style jsx global>{globalCss}</style>
-        <Menu>
-          <a id="home" className="menu-item" href="/"><MenuItem>Home</MenuItem></a>
-          <a id="about" className="menu-item" href="/about"><MenuItem>About</MenuItem></a>
-          <a id="contact" className="menu-item" href="/rooms"><MenuItem>Rooms</MenuItem></a>
-        </Menu>
         <Nav>
-          <a href="/"><Branding>AIRJAM</Branding></a>
+          <a href="/"><Branding>🎛️ AIRJAM</Branding></a>
         </Nav>
         {this.props.children}
       </Wrapper>
