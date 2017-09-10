@@ -3,8 +3,10 @@ import React from 'react'
 import Page from '../components/page'
 import MidiMachine from '../components/midi-machine'
 import PianoPad from '../components/piano-pad'
+import MotionController from '../components/motion-controller'
 import RTM from 'satori-rtm-sdk';
 import styled from 'styled-components'
+import mapMotion from '../lib/motion-mapper'
 
 const rtm = new RTM('wss://q5241z7b.api.satori.com', 'CD3108D6a79CAE30b8E8C37ebad877A6');
 const channelName = 'jam-session-1'
@@ -61,9 +63,16 @@ export default class Rooms extends React.Component {
 
     this.channel = channel;
     this.rtm = rtm;
+
   }
 
   onNotePushed(note) {
+    // if(this.midiMachine) {
+    //   this.onMotionOrOrientationChanged(
+    //     { acceleration: { x: 5.0, y: 0.0, z: 0.0 } }, 
+    //     { alpha: -180.0, beta: 45.35, gamma: -24.45 }
+    //   );
+    // }
     if(this.midiMachine) {
       this.midiMachine.playNote(note);
 
@@ -81,6 +90,12 @@ export default class Rooms extends React.Component {
     }
   }
 
+  onMotionOrOrientationChanged(motion, orientation) {
+    if(this.midiMachine) {
+      mapMotion(motion, orientation, this.midiMachine.MIDIInstance());
+    }
+  }
+
   render() {
     const { clientConnected } = this.state; 
     return (
@@ -95,6 +110,7 @@ export default class Rooms extends React.Component {
         }
         <MidiMachine ref={(midiMachine) => { this.midiMachine = midiMachine; }}/>
         <PianoPad onNotePushed={this.onNotePushed.bind(this)}/>
+        <MotionController onMotionOrOrientationChanged={this.onMotionOrOrientationChanged.bind(this)}/>
       </Page>
     );
   }

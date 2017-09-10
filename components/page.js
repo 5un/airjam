@@ -28,10 +28,7 @@ export default class Page extends React.Component {
         <Nav>
           <h1>AIRJAM</h1>
         </Nav>
-        <Section>
-          {this.props.children}
-        </Section>
-        
+        {this.props.children}
       </div>
     );
   }

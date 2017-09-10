@@ -48,6 +48,10 @@ export default class MidiMachine extends React.Component {
     MIDI.noteOff(0, note, delay + 0.75);
   }
 
+  MIDIInstance() {
+    return this.MIDI;
+  }
+
 
   render() {
     return (

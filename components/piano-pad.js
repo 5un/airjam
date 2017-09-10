@@ -2,6 +2,14 @@ import React from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 
+const PianoPadContainer = styled.div `
+  position: absolute;
+  left: auto;
+  width: 100%;
+  bottom: 0;
+  text-align: center;
+  background-color: black;
+`;
 
 const PianoWhiteKey = styled.button`
   display: inline-block;
@@ -68,18 +76,18 @@ export default class PianoPad extends React.Component {
   }
 
   render() {
-    const numOctaves = this.props.numOctaves || 2;
+    const numOctaves = this.props.numOctaves || 3;
     const startingOctave = this.props.startingOctave || 3;
     const keys = _.range(12 * startingOctave, 12 * (startingOctave + numOctaves));
 
     return (
-      <div>
+      <PianoPadContainer>
         {_.map(keys, k => (
           _.indexOf(blackKeys, k % 12) > -1 ?
             <PianoBlackKey onClick={this.onPianoKeyPushed.bind(this, k)}></PianoBlackKey>:
             <PianoWhiteKey onClick={this.onPianoKeyPushed.bind(this, k)}></PianoWhiteKey>
         ))}
-      </div>
+      </PianoPadContainer>
     );
   }
 
