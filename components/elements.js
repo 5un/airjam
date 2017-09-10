@@ -1,5 +1,13 @@
 import styled from 'styled-components'
 
+export const PageWrapper = styled.div`
+  padding: 40px 20px;
+`
+
+export const CenterPageWrapper = PageWrapper.extend`
+  text-align: center;
+`
+
 export const Row = styled.div`
   display: block;
 `
@@ -17,5 +25,13 @@ export const Button = styled.button `
   border-radius: 4px;
   font-family: Montserrat;
   font-size: 18px;
+`
 
+export const InputText = styled.input`
+  backgrond: white;
+  border: 0;
+  border-radius: 4px;
+  font-size: 18px;
+  padding: 10px;
+  margin-bottom: 10px;
 `

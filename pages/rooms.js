@@ -17,7 +17,6 @@ import _ from 'lodash'
 import users from '../mock-data/users.json'
 
 const rtm = new RTM('wss://q5241z7b.api.satori.com', 'CD3108D6a79CAE30b8E8C37ebad877A6');
-const channelName = 'jam-session-1'
 
 const MOTION_HISTORY_SIZE = 10;
 const MAX_SAMPLING_RATE = 500;
@@ -73,6 +72,8 @@ export default class Rooms extends React.Component {
   }
 
   componentDidMount() {
+    const roomId = _.get(this.props, 'url.query.id', 'Unknown');
+    const channelName = `airjam-${roomId}`
     var channel = rtm.subscribe(channelName, RTM.SubscriptionMode.SIMPLE);
 
     // Do not subscribe twice
@@ -130,6 +131,8 @@ export default class Rooms extends React.Component {
 
   onNotePushed(note) {
     const { currentUser, currentInstrument } = this.state;
+    const roomId = _.get(this.props, 'url.query.id', 'Unknown');
+    const channelName = `airjam-${roomId}`
     if(this.rtm) {
       const msg = { user: currentUser, instrument: currentInstrument, note: note };
       this.rtm.publish(channelName, msg , (pdu) => {
@@ -149,6 +152,9 @@ export default class Rooms extends React.Component {
 
   sendDrumNote(label) {
     const { currentUser, currentInstrument } = this.state;
+    const roomId = _.get(this.props, 'url.query.id', 'Unknown');
+    const channelName = `airjam-${roomId}`
+    
     if(this.rtm) {
       const msg = { user: currentUser, instrument: currentInstrument, note: label };
       this.rtm.publish(channelName, msg , (pdu) => {

@@ -18,7 +18,7 @@ const instruments = [
 ];
 
 const InstrumentsBarContainer = styled.div `
-  background-color: #444444;
+  background-color: #2A1E4A;
   text-align: center;
   padding: 20px;
 `
