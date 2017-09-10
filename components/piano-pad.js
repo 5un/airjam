@@ -3,15 +3,13 @@ import styled from 'styled-components'
 import _ from 'lodash'
 
 const PianoPadContainer = styled.div `
-  position: absolute;
-  left: auto;
-  width: 100%;
-  bottom: 0;
   text-align: center;
   background-color: black;
+  padding: 10px 0px;
 `;
 
 const PianoWhiteKey = styled.button`
+  appearance: none;
   display: inline-block;
   background-color: white;
   border: 2px solid bold;
@@ -19,9 +17,11 @@ const PianoWhiteKey = styled.button`
   width: 12.5%;
   vertical-align: top;
   z-index: 1;
+  border-radius: 4px;
 `;
 
 const PianoBlackKey = styled.button`
+  appearance: none;
   display: inline-block;
   background-color: black;
   border: 2px solid bold;
@@ -30,6 +30,7 @@ const PianoBlackKey = styled.button`
   margin: 0 -6.25%;
   vertical-align: top;
   z-index: 2;
+  border-radius: 4px;
 `;
 
 const blackKeys = [1, 3, 6, 8, 10];

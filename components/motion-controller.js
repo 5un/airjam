@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 
-const debug = true;
+const debug = false;
 
 export default class MotionController extends React.Component {
 
@@ -83,7 +83,6 @@ export default class MotionController extends React.Component {
             <div id="orientation-debug" style={{ fontSize: '18px' }}>
             </div>
           </div>
-
         }
       </div>
     );

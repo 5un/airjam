@@ -6,6 +6,16 @@ body {
   border: 0;
   font-family: Montserrat;
   font-weight: 200;
+  color: white;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+a:hover {
+  color: #eeeeee;
 }
 
 h1, h2, h3, h4, h5 {
@@ -18,7 +28,7 @@ h1, h2, h3, h4, h5 {
   width: 36px;
   height: 30px;
   left: 36px;
-  top: 36px;
+  top: 30px;
   z-index: 2 !important;
 }
 
@@ -40,7 +50,7 @@ h1, h2, h3, h4, h5 {
 
 /* General sidebar styles */
 .bm-menu {
-  background: white;
+  background: #222222;
   padding: 4.5em 1.5em 0 0;
   font-size: 1.15em;
   overflow-x: visible;
@@ -48,7 +58,7 @@ h1, h2, h3, h4, h5 {
 
 /* Morph shape necessary with bubble or elastic */
 .bm-morph-shape {
-  fill: #373a47;
+  fill: #222222;
 }
 
 /* Wrapper for item list */

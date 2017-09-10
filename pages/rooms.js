@@ -3,18 +3,27 @@ import React from 'react'
 import Page from '../components/page'
 import MidiMachine from '../components/midi-machine'
 import WebAudioFont from '../components/web-audio-font'
+import UserTracks from '../components/user-tracks'
+import InstrumentsBar from '../components/instruments-bar'
 import PianoPad from '../components/piano-pad'
+import DrumPads from '../components/drum-pads'
 import MotionController from '../components/motion-controller'
 import RTM from 'satori-rtm-sdk';
 import styled from 'styled-components'
 import mapMotion from '../lib/motion-mapper'
 import _ from 'lodash'
 
+import users from '../mock-data/users.json'
+
 const rtm = new RTM('wss://q5241z7b.api.satori.com', 'CD3108D6a79CAE30b8E8C37ebad877A6');
 const channelName = 'jam-session-1'
 
 const MOTION_HISTORY_SIZE = 10;
 const MAX_SAMPLING_RATE = 500;
+
+const ConnectionStatus = styled.div`
+  float: right;
+`;
 
 const ClientConnectedIndicator = styled.div `
   display: inline-block;
@@ -24,12 +33,27 @@ const ClientConnectedIndicator = styled.div `
   border-radius: 10px;
 `
 
+const BottomPanel = styled.div`
+  position: fixed;
+  left: auto;
+  width: 100%;
+  bottom: 0;
+`;
+
+const InnerWrapper = styled.div`
+  padding: 20px 40px;
+`;
+
 export default class Rooms extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      clientConnected: false
+      clientConnected: false,
+      currentInstrument: {
+        name: 'piano'
+      },
+      showInstrumentsBar: false
     };
 
     this.history = {
@@ -42,7 +66,6 @@ export default class Rooms extends React.Component {
     };
     this.lastMotionTimestamp = new Date();
     this.timeOfLastTrigger = new Date();
-
   }
 
   componentDidMount() {
@@ -93,32 +116,28 @@ export default class Rooms extends React.Component {
   }
 
   onNotePushed(note) {
+    if(this.midiMachine) {
+      this.midiMachine.playNote(note);
 
-    // if(this.midiMachine) {
-    //   this.midiMachine.playNote(note);
+      if(this.rtm) {
+        const msg = { note: note };
+        this.rtm.publish(channelName, msg , (pdu) => {
+          if (pdu.action === 'rtm/publish/ok') {
+            console.log('Publish confirmed');
+          } else {
+            console.log('Failed to publish. RTM replied with the error ' +
+                pdu.body.error + ': ' + pdu.body.reason);
+          }
+        });
+      }
+    }
+  }
 
-    //   if(this.rtm) {
-    //     const msg = { note: note };
-    //     this.rtm.publish(channelName, msg , (pdu) => {
-    //       if (pdu.action === 'rtm/publish/ok') {
-    //         console.log('Publish confirmed');
-    //       } else {
-    //         console.log('Failed to publish. RTM replied with the error ' +
-    //             pdu.body.error + ': ' + pdu.body.reason);
-    //       }
-    //     });
-    //   }
-    // }
-
-    if(note % 12 == 0) {
-      this.webAudioFont.playSnare();
-    } 
-    if(note % 12 == 1) {
-      this.webAudioFont.playTom();
-    } 
-    if(note % 12 == 2) {
-      this.webAudioFont.playHihat();
-    } 
+  onDrumsButtonPushed(label) {
+    if(label === 'snare') this.webAudioFont.playSnare();
+    if(label === 'bass') this.webAudioFont.playBass();
+    if(label === 'tom') this.webAudioFont.playTom();
+    if(label === 'ride') this.webAudioFont.playRide();
   }
 
   updateMotionHistory(motion, orientation) {
@@ -142,6 +161,10 @@ export default class Rooms extends React.Component {
       this.history.orientation.splice(0, 1);
     }
     this.history.orientation.push(motion.orientation);
+  }
+
+  onInstrumentSelected(instrument) {
+    this.setState({ currentInstrument: instrument });
   }
 
   onMotionOrOrientationChanged(motion, orientation) {
@@ -173,21 +196,36 @@ export default class Rooms extends React.Component {
   }
 
   render() {
-    const { clientConnected } = this.state; 
+    const { clientConnected, currentInstrument, showInstrumentsBar } = this.state; 
     const roomId = _.get(this.props, 'url.query.id', 'Unknown');
     return (
       <Page>
-        <h1>Welcome to Room {roomId}</h1>
-        <p>Start jamming right away</p>
-        {clientConnected &&
-          <div>Connected <ClientConnectedIndicator/></div>
-        }
-        {!clientConnected &&
-          <div>Not Connected</div>
-        }
+        <InnerWrapper>
+          <ConnectionStatus>
+          {clientConnected &&
+            <div>Connected <ClientConnectedIndicator/></div>
+          }
+          {!clientConnected &&
+            <div>Not Connected</div>
+          }
+          </ConnectionStatus>
+          <h1>Welcome to Room {roomId}</h1>
+          <p>Start jamming right away</p>
+          <UserTracks tracks={users}/>
+        </InnerWrapper>
         <MidiMachine ref={(midiMachine) => { this.midiMachine = midiMachine; }}/>
         <WebAudioFont ref={(webAudioFont) => { this.webAudioFont = webAudioFont; }} onSoundFontsLoaded={this.onSoundFontsLoaded.bind(this)}/>
-        <PianoPad onNotePushed={this.onNotePushed.bind(this)}/>
+        <BottomPanel>
+          {showInstrumentsBar && 
+            <InstrumentsBar onInstrumentSelected={this.onInstrumentSelected.bind(this)} />
+          }
+          {currentInstrument.name == 'piano' &&
+            <PianoPad onNotePushed={this.onNotePushed.bind(this)}/>
+          }
+          {currentInstrument.name == 'drums' &&
+            <DrumPads onButtonPushed={this.onDrumsButtonPushed.bind(this)}/>
+          }
+        </BottomPanel>
         <MotionController onMotionOrOrientationChanged={this.onMotionOrOrientationChanged.bind(this)}/>
       </Page>
     );

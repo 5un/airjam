@@ -3,10 +3,18 @@ import styled from 'styled-components'
 import { slide as Menu } from 'react-burger-menu'
 import globalCss from '../css/global.css.js'
 
+const Wrapper = styled.div`
+  background-color: #4c3782; 
+`
+
 const Nav = styled.nav `
-  background: orange;
+  background: #8268ca;
   color: white;
   padding: 10px 100px;
+`;
+
+const Branding = styled.h1`
+  letter-spacing: 10px;
 `;
 
 const Section = styled.section `
@@ -17,7 +25,7 @@ export default class Page extends React.Component {
 
   render() {
     return (
-      <div>
+      <Wrapper>
         <style jsx global>{globalCss}</style>
         <Menu>
           <a id="home" className="menu-item" href="/">Home</a>
@@ -26,10 +34,10 @@ export default class Page extends React.Component {
           <a onClick={ this.showSettings } className="menu-item--small" href="">Settings</a>
         </Menu>
         <Nav>
-          <h1>AIRJAM</h1>
+          <a href="/"><Branding>AIRJAM</Branding></a>
         </Nav>
         {this.props.children}
-      </div>
+      </Wrapper>
     );
   }
 
